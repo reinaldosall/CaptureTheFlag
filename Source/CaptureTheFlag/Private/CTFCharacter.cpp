@@ -1,0 +1,60 @@
+#include "CTFCharacter.h"
+#include "Camera/CameraComponent.h"
+#include "Components/InputComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/Engine.h" // necessário para GEngine
+#include "CTFPlayerState.h" // necessário para acessar o Team
+
+ACTFCharacter::ACTFCharacter()
+{
+	PrimaryActorTick.bCanEverTick = false;
+
+	// Câmera
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComponent->SetupAttachment(GetCapsuleComponent());
+	CameraComponent->bUsePawnControlRotation = true;
+	CameraComponent->SetRelativeLocation(FVector(0.f, 0.f, 64.f));
+
+	// Malha de primeira pessoa
+	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh1P"));
+	Mesh1P->SetupAttachment(CameraComponent);
+	Mesh1P->bCastDynamicShadow = false;
+	Mesh1P->CastShadow = false;
+	Mesh1P->SetOnlyOwnerSee(true);
+	Mesh1P->SetRelativeLocation(FVector(0.f, 0.f, -160.f));
+	Mesh1P->SetRelativeRotation(FRotator(2.f, -15.f, 5.f));
+
+	// Arma
+	Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun"));
+	Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
+	Gun->bCastDynamicShadow = false;
+	Gun->CastShadow = false;
+	Gun->SetOnlyOwnerSee(true);
+
+	// Movimento
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->JumpZVelocity = 600.f;
+	GetCharacterMovement()->AirControl = 0.2f;
+}
+
+void ACTFCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!IsLocallyControlled())
+	{
+		Mesh1P->SetVisibility(false, true);
+		Gun->SetVisibility(false, true);
+	}
+	else
+	{
+		if (ACTFPlayerState* PS = Cast<ACTFPlayerState>(GetPlayerState()))
+		{
+			FString TeamName = (PS->Team == ETeam::Red) ? TEXT("Red") : TEXT("Blue");
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("You are on the %s Team"), *TeamName));
+		}
+	}
+}
