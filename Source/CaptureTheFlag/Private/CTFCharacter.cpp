@@ -4,8 +4,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Engine/Engine.h" // necessário para GEngine
-#include "CTFPlayerState.h" // necessário para acessar o Team
+#include "Engine/Engine.h"
+#include "CTFPlayerState.h"
 
 ACTFCharacter::ACTFCharacter()
 {
@@ -57,4 +57,45 @@ void ACTFCharacter::BeginPlay()
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("You are on the %s Team"), *TeamName));
 		}
 	}
+}
+
+void ACTFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACTFCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ACTFCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("LookUp", this, &ACTFCharacter::LookUp);
+	PlayerInputComponent->BindAxis("Turn", this, &ACTFCharacter::Turn);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACTFCharacter::StartJump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACTFCharacter::StopJump);
+}
+
+void ACTFCharacter::MoveForward(float Value)
+{
+	AddMovementInput(GetActorForwardVector(), Value);
+}
+
+void ACTFCharacter::MoveRight(float Value)
+{
+	AddMovementInput(GetActorRightVector(), Value);
+}
+
+void ACTFCharacter::LookUp(float Value)
+{
+	AddControllerPitchInput(Value);
+}
+
+void ACTFCharacter::Turn(float Value)
+{
+	AddControllerYawInput(Value);
+}
+
+void ACTFCharacter::StartJump()
+{
+	bPressedJump = true;
+}
+
+void ACTFCharacter::StopJump()
+{
+	bPressedJump = false;
 }
