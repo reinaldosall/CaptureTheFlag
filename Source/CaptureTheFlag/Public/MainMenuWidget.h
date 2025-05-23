@@ -23,7 +23,7 @@ protected:
     UButton* JoinButton;
 
     UPROPERTY(meta = (BindWidget))
-    UButton* QuitButton;  // Novo botão "Quit"
+    UButton* QuitButton;  
 
 private:
     // Funções chamadas quando os botões são pressionados

@@ -2,7 +2,7 @@
 #include "Components/Button.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
-#include "CTFMainMenuGameMode.h"  // Alterado para usar o novo GameMode CTFMainMenuGameMode
+#include "CTFMainMenuGameMode.h" 
 
 void UMainMenuWidget::NativeConstruct()
 {
@@ -21,7 +21,7 @@ void UMainMenuWidget::NativeConstruct()
 
     if (QuitButton)
     {
-        QuitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnQuitButtonPressed);  // Configura o botão Quit
+        QuitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnQuitButtonPressed); 
     }
 }
 

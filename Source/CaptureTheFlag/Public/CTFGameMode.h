@@ -1,36 +1,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameMode.h"
-#include "ETeam.h"  // Incluir o arquivo onde o ETeam é definido
+#include "GameFramework/GameModeBase.h"
+#include "ETeam.h"
 #include "CTFGameMode.generated.h"
 
 UCLASS()
-class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
+class CAPTURETHEFLAG_API ACTFGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
 	ACTFGameMode();
 
-protected:
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void BeginPlay() override;
 
-public:
-	virtual void PostLogin(APlayerController* NewPlayer) override;
-
-private:
+protected:
 	void AssignTeam(APlayerState* PlayerState);
-	void ReturnFlagToCenter();
-	void CheckForMatchEnd();
 
-	// Funções para aumentar a pontuação
-	void OnScore(ETeam Team);  // Agora referenciando o ETeam correto
-
-	// Variáveis para armazenar os pontos
 	int32 RedScore;
 	int32 BlueScore;
 
-	// Variável para armazenar a referência ao FlagActor
 	class AFlagActor* FlagActor;
 };

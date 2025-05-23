@@ -19,8 +19,8 @@ ACTFGameMode::ACTFGameMode()
     RedScore = 0;
     BlueScore = 0;
 
-    // Inicialize a FlagActor (isso pode ser modificado dependendo de como você configura a FlagActor no seu projeto)
-    FlagActor = nullptr; // Inicializa com nullptr. Você pode instanciar a bandeira no BeginPlay ou outro método.
+    // Inicialize a FlagActor
+    FlagActor = nullptr;
 }
 
 void ACTFGameMode::PostLogin(APlayerController* NewPlayer)
@@ -35,12 +35,13 @@ void ACTFGameMode::PostLogin(APlayerController* NewPlayer)
 
 void ACTFGameMode::AssignTeam(APlayerState* PlayerState)
 {
+    // Atribui time ao jogador
     if (ACTFPlayerState* PS = Cast<ACTFPlayerState>(PlayerState))
     {
         int32 RedCount = 0;
         int32 BlueCount = 0;
 
-        // Contabilizar jogadores nos times
+        // Contabiliza jogadores nos times
         for (APlayerState* OtherState : GameState->PlayerArray)
         {
             if (const ACTFPlayerState* OtherPS = Cast<ACTFPlayerState>(OtherState))
@@ -52,13 +53,9 @@ void ACTFGameMode::AssignTeam(APlayerState* PlayerState)
             }
         }
 
-        // Atribuir time ao jogador com base no número de jogadores
         ETeam AssignedTeam = (RedCount <= BlueCount) ? ETeam::Red : ETeam::Blue;
-
-        // Definir o time para o jogador
         PS->SetTeam(AssignedTeam);
 
-        // Mensagem de depuração para saber qual time foi atribuído
         if (GEngine)
         {
             FString TeamName = (AssignedTeam == ETeam::Red) ? TEXT("Red") : TEXT("Blue");
@@ -71,13 +68,12 @@ void ACTFGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
-    // Inicializa a FlagActor no mundo
+    // Instancia a FlagActor no mundo
     if (!FlagActor)
     {
-        // Instancia a FlagActor, se necessário. Aqui você pode usar o método para instanciar o ator
+        // Instancia a bandeira
         // Exemplo: FlagActor = GetWorld()->SpawnActor<AFlagActor>(FlagActorClass, SpawnLocation, SpawnRotation);
     }
 
-    // Outras configurações necessárias no início do jogo
     UE_LOG(LogTemp, Warning, TEXT("Game has started!"));
 }
