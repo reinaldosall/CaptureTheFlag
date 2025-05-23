@@ -13,22 +13,15 @@ public:
 	AFlagActor();
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	class UStaticMeshComponent* FlagMesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	class USphereComponent* CollisionSphere;
-
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-						UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-						bool bFromSweep, const FHitResult& SweepResult);
-
 public:
-	UPROPERTY(Replicated)
-	class ACTFCharacter* Carrier;
+	virtual void Tick(float DeltaTime) override;
 
-	void DropFlag();
+	// Função para retornar a bandeira ao centro do mapa
+	void ReturnFlagToCenter();
+
+private:
+	// Localização inicial do centro da bandeira
+	FVector InitialLocation;
 };
