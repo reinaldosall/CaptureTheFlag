@@ -91,7 +91,13 @@ DerivedDataCache/*
 
 # Source: manter tudo (não precisa ignorar nada)
 
-# Content: ignorar tudo, menos Blueprints
+# Content: ignorar tudo
 Content/*
+
+# Mas não ignorar a pasta Blueprints e tudo dentro dela
 !Content/Blueprints/
 !Content/Blueprints/**
+
+# E também não ignorar a pasta Widgets e tudo dentro dela
+!Content/Widgets/
+!Content/Widgets/**
