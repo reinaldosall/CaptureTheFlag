@@ -1,8 +1,9 @@
 #include "CTFGameMode.h"
 #include "CTFPlayerState.h"
 #include "CTFGameState.h"
-#include "CTFCharacter.h"
+#include "FlagActor.h"
 #include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/GameStateBase.h"
 #include "Engine/World.h" // Para instanciar a FlagActor
 
@@ -67,18 +68,26 @@ void ACTFGameMode::AssignTeam(APlayerState* PlayerState)
 void ACTFGameMode::BeginPlay()
 {
     Super::BeginPlay();
-    
+
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
     if (PC)
     {
         PC->SetInputMode(FInputModeGameOnly());
         PC->bShowMouseCursor = false;
     }
-    // Instancia a FlagActor no mundo
-    if (!FlagActor)
+
+    // Detecta e referencia uma bandeira já existente no mapa
+    TArray<AActor*> FoundFlags;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFlagActor::StaticClass(), FoundFlags);
+
+    if (FoundFlags.Num() > 0)
     {
-        // Instancia a bandeira
-        // Exemplo: FlagActor = GetWorld()->SpawnActor<AFlagActor>(FlagActorClass, SpawnLocation, SpawnRotation);
+        FlagActor = Cast<AFlagActor>(FoundFlags[0]);
+        UE_LOG(LogTemp, Warning, TEXT("Bandeira existente encontrada no mapa."));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Nenhuma bandeira encontrada no mapa!"));
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Game has started!"));
