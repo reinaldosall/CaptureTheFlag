@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
 #include "ETeam.h"
+#include "CTFGameHUDWidget.h"
 #include "CTFGameMode.generated.h"
 
 class AFlagActor;
@@ -14,7 +15,7 @@ class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
 
 public:
 	ACTFGameMode();
-
+	
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
@@ -27,4 +28,7 @@ protected:
 
 	UPROPERTY()
 	AFlagActor* FlagActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UCTFGameHUDWidget> GameHUDWidgetClass;
 };

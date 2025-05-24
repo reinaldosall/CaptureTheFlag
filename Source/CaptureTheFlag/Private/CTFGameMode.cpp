@@ -102,9 +102,17 @@ void ACTFGameMode::BeginPlay()
     {
         PC->SetInputMode(FInputModeGameOnly());
         PC->bShowMouseCursor = false;
+
+        if (GameHUDWidgetClass)
+        {
+            UCTFGameHUDWidget* HUD = CreateWidget<UCTFGameHUDWidget>(PC, GameHUDWidgetClass);
+            if (HUD)
+            {
+                HUD->AddToViewport();
+            }
+        }
     }
 
-    // Detecta e referencia uma bandeira já existente no mapa
     TArray<AActor*> FoundFlags;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFlagActor::StaticClass(), FoundFlags);
 
@@ -120,3 +128,4 @@ void ACTFGameMode::BeginPlay()
 
     UE_LOG(LogTemp, Warning, TEXT("Game has started!"));
 }
+
