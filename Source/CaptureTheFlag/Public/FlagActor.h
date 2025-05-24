@@ -18,10 +18,11 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
-	// Função para retornar a bandeira ao centro do mapa
 	void ReturnFlagToCenter();
 
 private:
-	// Localização inicial do centro da bandeira
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* FlagMesh;
+
 	FVector InitialLocation;
 };

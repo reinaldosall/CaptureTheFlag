@@ -1,20 +1,29 @@
 #include "FlagActor.h"
-#include "Engine/World.h"
+#include "Components/StaticMeshComponent.h"
 
 AFlagActor::AFlagActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Defina a localização inicial como o centro do mapa
-	InitialLocation = FVector(0.f, 0.f, 100.f); // Ajuste as coordenadas conforme necessário
+	FlagMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlagMesh"));
+	RootComponent = FlagMesh;
+
+	FlagMesh->SetSimulatePhysics(false);
+	FlagMesh->SetEnableGravity(false);
+	FlagMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	FlagMesh->SetCollisionProfileName(TEXT("BlockAll"));
+	FlagMesh->SetVisibility(true);
+	FlagMesh->SetHiddenInGame(false);
+
+	bReplicates = true;
+	SetReplicatingMovement(true);
 }
 
 void AFlagActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	// Coloque a bandeira na posição inicial ao começar
-	SetActorLocation(InitialLocation);
+
+	InitialLocation = GetActorLocation(); // Salva posição inicial real no BeginPlay
 }
 
 void AFlagActor::Tick(float DeltaTime)
@@ -24,6 +33,5 @@ void AFlagActor::Tick(float DeltaTime)
 
 void AFlagActor::ReturnFlagToCenter()
 {
-	// Retorne a bandeira à localização inicial
 	SetActorLocation(InitialLocation);
 }
