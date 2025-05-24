@@ -44,6 +44,14 @@ void ACTFCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
+    UE_LOG(LogTemp, Warning, TEXT("Character spawned at location: %s"), *GetActorLocation().ToString());
+
+    APlayerController* PC = Cast<APlayerController>(GetController());
+    if (IsLocallyControlled())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Character is locally controlled and possessed by: %s"), *GetNameSafe(PC));
+    }
+    
     if (!IsLocallyControlled())
     {
         Mesh1P->SetVisibility(false, true);

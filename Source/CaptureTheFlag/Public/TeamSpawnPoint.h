@@ -11,8 +11,8 @@ class CAPTURETHEFLAG_API ATeamSpawnPoint : public AActor
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Team")
-	ETeam Team;
-
 	ATeamSpawnPoint();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
+	ETeam Team;
 };

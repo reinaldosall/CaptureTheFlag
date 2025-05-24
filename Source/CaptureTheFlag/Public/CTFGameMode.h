@@ -19,7 +19,6 @@ public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
-
 	void AssignTeam(APlayerState* PlayerState);
 
 protected:

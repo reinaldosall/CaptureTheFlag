@@ -33,8 +33,12 @@ void ACTFGameMode::PostLogin(APlayerController* NewPlayer)
     if (NewPlayer && NewPlayer->PlayerState)
     {
         AssignTeam(NewPlayer->PlayerState);
+
+        AActor* StartSpot = ChoosePlayerStart(NewPlayer);
+        RestartPlayerAtPlayerStart(NewPlayer, StartSpot);
     }
 }
+
 
 void ACTFGameMode::AssignTeam(APlayerState* PlayerState)
 {
@@ -69,21 +73,23 @@ void ACTFGameMode::AssignTeam(APlayerState* PlayerState)
 
 AActor* ACTFGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
-    if (APlayerState* PS = Player->PlayerState)
+    if (Player && Player->PlayerState)
     {
-        if (ACTFPlayerState* CTFPS = Cast<ACTFPlayerState>(PS))
+        if (ACTFPlayerState* PS = Cast<ACTFPlayerState>(Player->PlayerState))
         {
+            ETeam Team = PS->Team;
+
             for (TActorIterator<ATeamSpawnPoint> It(GetWorld()); It; ++It)
             {
-                if (It->Team == CTFPS->Team)
+                if (It->Team == Team)
                 {
+                    UE_LOG(LogTemp, Warning, TEXT("Spawning %s at %s"), *UEnum::GetValueAsString(Team), *It->GetActorLocation().ToString());
                     return *It;
                 }
             }
         }
     }
 
-    // fallback se nada for encontrado
     return Super::ChoosePlayerStart_Implementation(Player);
 }
 
