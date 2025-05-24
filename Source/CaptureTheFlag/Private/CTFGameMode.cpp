@@ -5,7 +5,9 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/GameStateBase.h"
-#include "Engine/World.h" // Para instanciar a FlagActor
+#include "TeamSpawnPoint.h"
+#include "EngineUtils.h"
+#include "Engine/World.h" 
 
 ACTFGameMode::ACTFGameMode()
 {
@@ -63,6 +65,26 @@ void ACTFGameMode::AssignTeam(APlayerState* PlayerState)
             GEngine->AddOnScreenDebugMessage(-1, 155.f, FColor::Green, FString::Printf(TEXT("%s joined the %s team."), *PS->GetPlayerName(), *TeamName));
         }
     }
+}
+
+AActor* ACTFGameMode::ChoosePlayerStart_Implementation(AController* Player)
+{
+    if (APlayerState* PS = Player->PlayerState)
+    {
+        if (ACTFPlayerState* CTFPS = Cast<ACTFPlayerState>(PS))
+        {
+            for (TActorIterator<ATeamSpawnPoint> It(GetWorld()); It; ++It)
+            {
+                if (It->Team == CTFPS->Team)
+                {
+                    return *It;
+                }
+            }
+        }
+    }
+
+    // fallback se nada for encontrado
+    return Super::ChoosePlayerStart_Implementation(Player);
 }
 
 void ACTFGameMode::BeginPlay()
