@@ -1,23 +1,28 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "ETeam.h"
+#include "GameFramework/GameMode.h"
 #include "CTFMainMenuGameMode.generated.h"
 
 UCLASS()
-class CAPTURETHEFLAG_API ACTFMainMenuGameMode : public AGameModeBase
+class CAPTURETHEFLAG_API ACTFMainMenuGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
 public:
 	ACTFMainMenuGameMode();
 
+protected:
 	virtual void BeginPlay() override;
 
+public:
 	void HostGame();
 	void JoinGame();
 
-protected:
-	void AssignTeam(APlayerState* PlayerState);
+private:
+	UPROPERTY()
+	class UUserWidget* MainMenuWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> MainMenuWidgetClass;
 };

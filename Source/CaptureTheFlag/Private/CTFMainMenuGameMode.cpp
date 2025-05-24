@@ -1,79 +1,92 @@
 #include "CTFMainMenuGameMode.h"
-#include "CTFPlayerState.h"
-#include "CTFGameState.h"
-#include "CTFCharacter.h"
-#include "MainMenuWidget.h"
-#include "GameFramework/PlayerController.h"
-#include "UObject/ConstructorHelpers.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
+#include "TimerManager.h"
 
 ACTFMainMenuGameMode::ACTFMainMenuGameMode()
 {
-    // Definindo as classes de PlayerState e GameState
-    PlayerStateClass = ACTFPlayerState::StaticClass();
-    GameStateClass = ACTFGameState::StaticClass();
-
-    // Definindo o personagem (Pawn) que será usado no jogo
-    static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Blueprints/Characters/BP_CTFCharacter"));
-    DefaultPawnClass = PlayerPawnClassFinder.Class;
+	static ConstructorHelpers::FClassFinder<UUserWidget> MenuWidgetBPClass(TEXT("/Game/Widgets/WBP_MainMenu"));
+	if (MenuWidgetBPClass.Succeeded())
+	{
+		MainMenuWidgetClass = MenuWidgetBPClass.Class;
+	}
 }
 
 void ACTFMainMenuGameMode::BeginPlay()
 {
-    Super::BeginPlay();
-    // Lógica do início do jogo, como exibir uma mensagem ou iniciar alguma função
-    UE_LOG(LogTemp, Warning, TEXT("Main Menu Game Mode Started!"));
+	Super::BeginPlay();
 
-    if (UWorld* World = GetWorld())
-    {
-        APlayerController* PlayerController = World->GetFirstPlayerController();
-        if (PlayerController)
-        {
-            UMainMenuWidget* MainMenu = CreateWidget<UMainMenuWidget>(PlayerController, UMainMenuWidget::StaticClass());
-            if (MainMenu)
-            {
-                MainMenu->AddToViewport();  // Exibe o Widget na tela
-            }
-        }
-    }
+	UWorld* World = GetWorld();
+	if (MainMenuWidgetClass && World)
+	{
+		APlayerController* PC = World->GetFirstPlayerController();
+		if (PC)
+		{
+			PC->bShowMouseCursor = true;
+			PC->SetInputMode(FInputModeUIOnly());
+
+			MainMenuWidget = CreateWidget<UUserWidget>(PC, MainMenuWidgetClass);
+			if (MainMenuWidget)
+			{
+				MainMenuWidget->AddToViewport();
+			}
+		}
+	}
 }
 
 void ACTFMainMenuGameMode::HostGame()
 {
-    // Função chamada quando o jogador escolhe "Host"
-    // Inicia o servidor de jogos, criando uma nova sessão
-    UE_LOG(LogTemp, Warning, TEXT("Hosting a Game..."));
-    UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("FirstPersonMap")));
+	UE_LOG(LogTemp, Warning, TEXT("Hosting a Game..."));
+
+	if (MainMenuWidget)
+	{
+		MainMenuWidget->RemoveFromParent();
+		MainMenuWidget = nullptr;
+	}
+
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		TWeakObjectPtr<APlayerController> WeakPC = World->GetFirstPlayerController();
+
+		World->GetTimerManager().SetTimerForNextTick([WeakPC]()
+		{
+			if (WeakPC.IsValid())
+			{
+				WeakPC->SetInputMode(FInputModeGameOnly());
+				WeakPC->bShowMouseCursor = false;
+			}
+		});
+
+		UGameplayStatics::OpenLevel(World, FName(TEXT("FirstPersonMap")), true, TEXT("listen"));
+	}
 }
 
 void ACTFMainMenuGameMode::JoinGame()
 {
-    // Função chamada quando o jogador escolhe "Join"
-    // Inicia o processo de juntar-se a uma sessão existente
-    UE_LOG(LogTemp, Warning, TEXT("Joining an Existing Game..."));
-    // Aqui você pode colocar a lógica para encontrar e conectar-se a uma sessão existente
-}
+	UE_LOG(LogTemp, Warning, TEXT("Joining an Existing Game..."));
 
-void ACTFMainMenuGameMode::AssignTeam(APlayerState* PlayerState)
-{
-    // Atribui os times com base na quantidade de jogadores
-    if (ACTFPlayerState* PS = Cast<ACTFPlayerState>(PlayerState))
-    {
-        int32 RedCount = 0;
-        int32 BlueCount = 0;
+	if (MainMenuWidget)
+	{
+		MainMenuWidget->RemoveFromParent();
+		MainMenuWidget = nullptr;
+	}
 
-        for (APlayerState* OtherState : GameState->PlayerArray)
-        {
-            if (const ACTFPlayerState* OtherPS = Cast<ACTFPlayerState>(OtherState))
-            {
-                if (OtherPS->Team == ETeam::Red)
-                    RedCount++;
-                else if (OtherPS->Team == ETeam::Blue)
-                    BlueCount++;
-            }
-        }
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		TWeakObjectPtr<APlayerController> WeakPC = World->GetFirstPlayerController();
 
-        ETeam AssignedTeam = (RedCount <= BlueCount) ? ETeam::Red : ETeam::Blue;
-        PS->SetTeam(AssignedTeam);
-    }
+		World->GetTimerManager().SetTimerForNextTick([WeakPC]()
+		{
+			if (WeakPC.IsValid())
+			{
+				WeakPC->SetInputMode(FInputModeGameOnly());
+				WeakPC->bShowMouseCursor = false;
+			}
+		});
+
+		UGameplayStatics::OpenLevel(World, FName(TEXT("127.0.0.1")));
+	}
 }

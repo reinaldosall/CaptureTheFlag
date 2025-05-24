@@ -1,26 +1,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 #include "ETeam.h"
 #include "CTFGameMode.generated.h"
 
+class AFlagActor;
+
 UCLASS()
-class CAPTURETHEFLAG_API ACTFGameMode : public AGameModeBase
+class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
 public:
 	ACTFGameMode();
 
-	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void BeginPlay() override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 
-protected:
 	void AssignTeam(APlayerState* PlayerState);
 
+protected:
 	int32 RedScore;
 	int32 BlueScore;
 
-	class AFlagActor* FlagActor;
+	UPROPERTY()
+	AFlagActor* FlagActor;
 };

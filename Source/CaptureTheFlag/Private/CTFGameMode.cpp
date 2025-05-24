@@ -67,7 +67,13 @@ void ACTFGameMode::AssignTeam(APlayerState* PlayerState)
 void ACTFGameMode::BeginPlay()
 {
     Super::BeginPlay();
-
+    
+    APlayerController* PC = GetWorld()->GetFirstPlayerController();
+    if (PC)
+    {
+        PC->SetInputMode(FInputModeGameOnly());
+        PC->bShowMouseCursor = false;
+    }
     // Instancia a FlagActor no mundo
     if (!FlagActor)
     {
