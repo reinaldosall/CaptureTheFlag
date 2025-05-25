@@ -2,7 +2,7 @@
 #include "CTFPlayerState.h"
 #include "CTFGameState.h"
 #include "CTFPlayerController.h"
-#include "FlagActor.h"
+#include "CTFFlagActor.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/GameStateBase.h"
@@ -107,11 +107,11 @@ void ACTFGameMode::BeginPlay()
     }
 
     TArray<AActor*> FoundFlags;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFlagActor::StaticClass(), FoundFlags);
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTFFlagActor::StaticClass(), FoundFlags);
 
     if (FoundFlags.Num() > 0)
     {
-        FlagActor = Cast<AFlagActor>(FoundFlags[0]);
+        FlagActor = Cast<ACTFFlagActor>(FoundFlags[0]);
         UE_LOG(LogTemp, Warning, TEXT("Bandeira existente encontrada no mapa."));
     }
     else

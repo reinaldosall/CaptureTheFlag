@@ -2,15 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "FlagActor.generated.h"
+#include "CTFFlagActor.generated.h"
 
 UCLASS()
-class CAPTURETHEFLAG_API AFlagActor : public AActor
+class CAPTURETHEFLAG_API ACTFFlagActor : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	AFlagActor();
+	ACTFFlagActor();
 
 protected:
 	virtual void BeginPlay() override;

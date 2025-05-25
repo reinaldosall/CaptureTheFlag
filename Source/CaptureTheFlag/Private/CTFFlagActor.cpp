@@ -1,7 +1,7 @@
-#include "FlagActor.h"
+#include "CTFFlagActor.h"
 #include "Components/StaticMeshComponent.h"
 
-AFlagActor::AFlagActor()
+ACTFFlagActor::ACTFFlagActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -19,19 +19,19 @@ AFlagActor::AFlagActor()
 	SetReplicatingMovement(true);
 }
 
-void AFlagActor::BeginPlay()
+void ACTFFlagActor::BeginPlay()
 {
 	Super::BeginPlay();
 
 	InitialLocation = GetActorLocation(); // Salva posição inicial real no BeginPlay
 }
 
-void AFlagActor::Tick(float DeltaTime)
+void ACTFFlagActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AFlagActor::ReturnFlagToCenter()
+void ACTFFlagActor::ReturnFlagToCenter()
 {
 	SetActorLocation(InitialLocation);
 }

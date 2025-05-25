@@ -6,7 +6,7 @@
 #include "CTFGameHUDWidget.h"
 #include "CTFGameMode.generated.h"
 
-class AFlagActor;
+class ACTFFlagActor;
 
 UCLASS()
 class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
@@ -27,7 +27,7 @@ protected:
 	int32 BlueScore;
 
 	UPROPERTY()
-	AFlagActor* FlagActor;
+	ACTFFlagActor* FlagActor;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UCTFGameHUDWidget> GameHUDWidgetClass;
