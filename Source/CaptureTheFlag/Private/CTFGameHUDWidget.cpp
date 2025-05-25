@@ -2,6 +2,20 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 
+void UCTFGameHUDWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	UE_LOG(LogTemp, Warning, TEXT("CTFGameHUDWidget initialized"));
+
+	// Aqui você pode adicionar binds de botão futuramente, se necessário.
+	// Exemplo:
+	// if (DashButton)
+	// {
+	//     DashButton->OnClicked.AddDynamic(this, &UCTFGameHUDWidget::OnDashPressed);
+	// }
+}
+
 void UCTFGameHUDWidget::UpdateScore(int32 RedScore, int32 BlueScore)
 {
 	if (ScoreText)

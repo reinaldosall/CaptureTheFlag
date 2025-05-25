@@ -1,6 +1,7 @@
 #include "CTFGameMode.h"
 #include "CTFPlayerState.h"
 #include "CTFGameState.h"
+#include "CTFPlayerController.h"
 #include "FlagActor.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,7 +15,8 @@ ACTFGameMode::ACTFGameMode()
     // Defina as classes personalizadas
     static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Blueprints/Characters/BP_CTFCharacter"));
     DefaultPawnClass = PlayerPawnClassFinder.Class;
-
+    
+    PlayerControllerClass = ACTFPlayerController::StaticClass();
     PlayerStateClass = ACTFPlayerState::StaticClass();
     GameStateClass = ACTFGameState::StaticClass();
 
@@ -102,15 +104,6 @@ void ACTFGameMode::BeginPlay()
     {
         PC->SetInputMode(FInputModeGameOnly());
         PC->bShowMouseCursor = false;
-
-        if (GameHUDWidgetClass)
-        {
-            UCTFGameHUDWidget* HUD = CreateWidget<UCTFGameHUDWidget>(PC, GameHUDWidgetClass);
-            if (HUD)
-            {
-                HUD->AddToViewport();
-            }
-        }
     }
 
     TArray<AActor*> FoundFlags;

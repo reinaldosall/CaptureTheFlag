@@ -13,7 +13,7 @@ class CAPTURETHEFLAG_API ACTFPlayerState : public APlayerState
 public:
     ACTFPlayerState();
 
-    UPROPERTY(ReplicatedUsing = OnRep_Team)
+    UPROPERTY(Replicated, BlueprintReadOnly)
     ETeam Team;
 
     void SetTeam(ETeam NewTeam);
