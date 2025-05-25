@@ -24,6 +24,9 @@ ACTFFlagActor::ACTFFlagActor()
 void ACTFFlagActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitialLocation = GetActorLocation();
+	InitialRotation = GetActorRotation();
 }
 
 void ACTFFlagActor::Tick(float DeltaTime)
@@ -50,7 +53,7 @@ void ACTFFlagActor::OnFlagOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 void ACTFFlagActor::ReturnFlagToCenter()
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	SetActorLocation(FVector(1510.f, 1600.f, 90.f)); // Altere conforme necessário
+	SetActorLocationAndRotation(InitialLocation, InitialRotation);
 	SetActorEnableCollision(true);
 	FlagHolder = nullptr;
 }

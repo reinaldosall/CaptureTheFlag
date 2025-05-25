@@ -36,4 +36,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void ReturnFlagToCenter();
+
+private:
+	FVector InitialLocation;
+	FRotator InitialRotation;
 };
