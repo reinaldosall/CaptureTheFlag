@@ -4,9 +4,11 @@
 #include "GameFramework/GameMode.h"
 #include "ETeam.h"
 #include "CTFGameHUDWidget.h"
+#include "CTFCharacter.h"
+#include "CTFFlagActor.h"
 #include "CTFGameMode.generated.h"
 
-class ACTFFlagActor;
+//class ACTFFlagActor;
 
 UCLASS()
 class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
@@ -21,6 +23,7 @@ public:
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 	void AssignTeam(APlayerState* PlayerState);
+	void HandleFlagCapture(ACTFCharacter* ScoringCharacter);
 
 protected:
 	int32 RedScore;

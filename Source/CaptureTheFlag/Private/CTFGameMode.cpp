@@ -95,6 +95,42 @@ AActor* ACTFGameMode::ChoosePlayerStart_Implementation(AController* Player)
     return Super::ChoosePlayerStart_Implementation(Player);
 }
 
+void ACTFGameMode::HandleFlagCapture(ACTFCharacter* ScoringCharacter)
+{
+    if (!ScoringCharacter)
+        return;
+
+    ACTFPlayerState* PlayerState = ScoringCharacter->GetPlayerState<ACTFPlayerState>();
+    if (!PlayerState)
+        return;
+
+    ETeam ScoringTeam = PlayerState->Team;
+
+    if (ScoringTeam == ETeam::Red)
+    {
+        RedScore++;
+        UE_LOG(LogTemp, Warning, TEXT("Red Team scored! Current score: %d"), RedScore);
+    }
+    else if (ScoringTeam == ETeam::Blue)
+    {
+        BlueScore++;
+        UE_LOG(LogTemp, Warning, TEXT("Blue Team scored! Current score: %d"), BlueScore);
+    }
+
+    if (RedScore >= 3 || BlueScore >= 3)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("%s Team wins the game!"),
+            *UEnum::GetValueAsString(ScoringTeam));
+        // Reinicie o jogo ou vá para a tela de vitória aqui
+    }
+
+    // Retornar bandeira ao centro
+    for (TActorIterator<ACTFFlagActor> It(GetWorld()); It; ++It)
+    {
+        It->ReturnFlagToCenter();
+    }
+}
+
 void ACTFGameMode::BeginPlay()
 {
     Super::BeginPlay();

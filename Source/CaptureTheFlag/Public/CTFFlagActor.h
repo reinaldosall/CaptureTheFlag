@@ -34,9 +34,10 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-
 	void ReturnFlagToCenter();
-
+public:
+	ACTFCharacter* GetFlagHolder() const { return FlagHolder; }
+	
 private:
 	FVector InitialLocation;
 	FRotator InitialRotation;
