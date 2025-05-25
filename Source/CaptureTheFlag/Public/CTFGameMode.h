@@ -8,8 +8,6 @@
 #include "CTFFlagActor.h"
 #include "CTFGameMode.generated.h"
 
-//class ACTFFlagActor;
-
 UCLASS()
 class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
 {
@@ -18,6 +16,7 @@ class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
 public:
 	ACTFGameMode();
 	
+	bool bHasGameEnded = false;
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;

@@ -97,7 +97,7 @@ AActor* ACTFGameMode::ChoosePlayerStart_Implementation(AController* Player)
 
 void ACTFGameMode::HandleFlagCapture(ACTFCharacter* ScoringCharacter)
 {
-    if (!ScoringCharacter)
+    if (!ScoringCharacter || bHasGameEnded)
         return;
 
     ACTFPlayerState* PlayerState = ScoringCharacter->GetPlayerState<ACTFPlayerState>();
@@ -117,19 +117,36 @@ void ACTFGameMode::HandleFlagCapture(ACTFCharacter* ScoringCharacter)
         UE_LOG(LogTemp, Warning, TEXT("Blue Team scored! Current score: %d"), BlueScore);
     }
 
-    if (RedScore >= 3 || BlueScore >= 3)
+    // Condição de vitória
+    if ((RedScore >= 3 || BlueScore >= 3) && !bHasGameEnded)
     {
-        UE_LOG(LogTemp, Warning, TEXT("%s Team wins the game!"),
-            *UEnum::GetValueAsString(ScoringTeam));
-        // Reinicie o jogo ou vá para a tela de vitória aqui
+        bHasGameEnded = true;
+        UE_LOG(LogTemp, Warning, TEXT("%s Team wins the game!"), *UEnum::GetValueAsString(ScoringTeam));
+
+#if WITH_EDITOR
+        // PIE: ClientTravel para cada jogador
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            if (APlayerController* PC = It->Get())
+            {
+                PC->ClientTravel("/Game/Maps/EndMatchLevel", TRAVEL_Absolute);
+            }
+        }
+#else
+        // Build: ServerTravel padrão
+        FString LevelToOpen = TEXT("/Game/Maps/EndMatchLevel");
+        FString TravelCommand = LevelToOpen + TEXT("?listen");
+        GetWorld()->ServerTravel(TravelCommand);
+#endif
     }
 
-    // Retornar bandeira ao centro
+    // Retornar a bandeira ao centro
     for (TActorIterator<ACTFFlagActor> It(GetWorld()); It; ++It)
     {
         It->ReturnFlagToCenter();
     }
 }
+
 
 void ACTFGameMode::BeginPlay()
 {
