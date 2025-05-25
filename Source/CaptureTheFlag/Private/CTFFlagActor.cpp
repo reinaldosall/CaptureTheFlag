@@ -2,10 +2,12 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "CTFCharacter.h"
+#include "Net/UnrealNetwork.h"
 
 ACTFFlagActor::ACTFFlagActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	FlagMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlagMesh"));
 	RootComponent = FlagMesh;
@@ -24,7 +26,6 @@ ACTFFlagActor::ACTFFlagActor()
 void ACTFFlagActor::BeginPlay()
 {
 	Super::BeginPlay();
-
 	InitialLocation = GetActorLocation();
 	InitialRotation = GetActorRotation();
 }
@@ -52,8 +53,22 @@ void ACTFFlagActor::OnFlagOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
 
 void ACTFFlagActor::ReturnFlagToCenter()
 {
+	if (HasAuthority())
+	{
+		Multicast_ResetFlag();
+	}
+}
+
+void ACTFFlagActor::Multicast_ResetFlag_Implementation()
+{
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	SetActorLocationAndRotation(InitialLocation, InitialRotation);
 	SetActorEnableCollision(true);
 	FlagHolder = nullptr;
+}
+
+void ACTFFlagActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ACTFFlagActor, FlagHolder);
 }

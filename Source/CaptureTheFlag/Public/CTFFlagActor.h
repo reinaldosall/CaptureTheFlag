@@ -29,15 +29,21 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* CollisionComponent;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	ACTFCharacter* FlagHolder;
 
 public:
 	virtual void Tick(float DeltaTime) override;
 	void ReturnFlagToCenter();
-public:
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ResetFlag();
+	void Multicast_ResetFlag_Implementation();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	ACTFCharacter* GetFlagHolder() const { return FlagHolder; }
-	
+
 private:
 	FVector InitialLocation;
 	FRotator InitialRotation;
