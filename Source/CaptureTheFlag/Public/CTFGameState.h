@@ -13,10 +13,10 @@ class CAPTURETHEFLAG_API ACTFGameState : public AGameState
 public:
 	ACTFGameState();
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 RedScore;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 BlueScore;
 
 	void AddScore(ETeam Team, int32 Amount);
