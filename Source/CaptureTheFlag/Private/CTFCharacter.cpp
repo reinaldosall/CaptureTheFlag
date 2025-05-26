@@ -2,6 +2,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "DashAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/Engine.h"
@@ -38,6 +39,10 @@ ACTFCharacter::ACTFCharacter()
     GetCharacterMovement()->bOrientRotationToMovement = false;
     GetCharacterMovement()->JumpZVelocity = 600.f;
     GetCharacterMovement()->AirControl = 0.2f;
+
+    //GAS
+    AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+
 }
 
 void ACTFCharacter::BeginPlay()
@@ -51,7 +56,7 @@ void ACTFCharacter::BeginPlay()
     {
         UE_LOG(LogTemp, Warning, TEXT("Character is locally controlled and possessed by: %s"), *GetNameSafe(PC));
     }
-    
+
     if (!IsLocallyControlled())
     {
         Mesh1P->SetVisibility(false, true);
@@ -65,7 +70,18 @@ void ACTFCharacter::BeginPlay()
             GEngine->AddOnScreenDebugMessage(-1, 155.f, FColor::Yellow, FString::Printf(TEXT("You are on the %s Team"), *TeamName));
         }
     }
+
+    if (AbilitySystemComponent)
+    {
+        AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+        if (HasAuthority())
+        {
+            AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(UDashAbility::StaticClass(), 1, 0));
+        }
+    }
 }
+
 
 void ACTFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -76,6 +92,8 @@ void ACTFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
     PlayerInputComponent->BindAxis("Turn", this, &ACTFCharacter::Turn);
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACTFCharacter::StartJump);
     PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACTFCharacter::StopJump);
+    PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ACTFCharacter::ActivateDash);
+
 }
 
 void ACTFCharacter::MoveForward(float Value)
@@ -112,4 +130,12 @@ void ACTFCharacter::StartJump()
 void ACTFCharacter::StopJump()
 {
     bPressedJump = false;
+}
+
+void ACTFCharacter::ActivateDash()
+{
+    if (AbilitySystemComponent)
+    {
+        AbilitySystemComponent->TryActivateAbilityByClass(UDashAbility::StaticClass());
+    }
 }

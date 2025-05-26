@@ -1,19 +1,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
+#include "GameplayAbilitySpec.h"
 #include "GameFramework/Character.h"
 #include "CTFCharacter.generated.h"
 
 UCLASS()
-class CAPTURETHEFLAG_API ACTFCharacter : public ACharacter
+class CAPTURETHEFLAG_API ACTFCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	ACTFCharacter();
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
 protected:
 	virtual void BeginPlay() override;
+
+	//GAS
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
+	UAbilitySystemComponent* AbilitySystemComponent;
+	UFUNCTION()
+	void ActivateDash();
 
 	// Movimento e câmera
 	void MoveForward(float Value);

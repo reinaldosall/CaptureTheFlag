@@ -38,7 +38,6 @@ void UCTFGameHUDWidget::UpdateCooldowns(float DashCD, float FireballCD)
 	{
 		DashCooldownText->SetText(FText::FromString(FString::Printf(TEXT("%.1fs"), DashCD)));
 	}
-
 	if (FireballCooldownText)
 	{
 		FireballCooldownText->SetText(FText::FromString(FString::Printf(TEXT("%.1fs"), FireballCD)));

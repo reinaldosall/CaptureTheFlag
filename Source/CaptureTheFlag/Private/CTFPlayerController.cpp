@@ -1,4 +1,8 @@
 #include "CTFPlayerController.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "GameplayTagContainer.h"
+#include "CTFCharacter.h"
 #include "CTFGameInstance.h"
 #include "CTFGameState.h"
 #include "CTFGameHUDWidget.h"
@@ -36,7 +40,41 @@ void ACTFPlayerController::Tick(float DeltaTime)
 			GameHUDWidget->UpdateScore(GS->RedScore, GS->BlueScore);
 		}
 	}
+
+	if (IsLocalController() && GameHUDWidget)
+	{
+		APawn* MyPawn = GetPawn();
+		if (MyPawn)
+		{
+			if (IAbilitySystemInterface* ASCInterface = Cast<IAbilitySystemInterface>(MyPawn))
+			{
+				UAbilitySystemComponent* ASC = ASCInterface->GetAbilitySystemComponent();
+				if (ASC)
+				{
+					float TimeRemaining = 0.f;
+
+					FGameplayTagContainer CooldownTags;
+					CooldownTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Cooldown.Dash")));
+
+					TArray<FActiveGameplayEffectHandle> ActiveEffects = ASC->GetActiveEffectsWithAllTags(CooldownTags);
+					for (const FActiveGameplayEffectHandle& Handle : ActiveEffects)
+					{
+						const FActiveGameplayEffect* Effect = ASC->GetActiveGameplayEffect(Handle);
+						if (Effect)
+						{
+							TimeRemaining = Effect->GetTimeRemaining(ASC->GetWorld()->GetTimeSeconds());
+							break;
+						}
+					}
+
+					GameHUDWidget->UpdateCooldowns(TimeRemaining, 0.f);
+				}
+			}
+		}
+	}
+
 }
+
 void ACTFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -69,6 +107,4 @@ void ACTFPlayerController::BeginPlay()
 			UE_LOG(LogTemp, Error, TEXT("GameHUDWidgetClass é nullptr"));
 		}
 	}
-	
 }
-
