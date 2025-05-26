@@ -1,6 +1,7 @@
 #include "CTFGameMode.h"
 #include "CTFPlayerState.h"
 #include "CTFGameState.h"
+#include "CTFGameInstance.h"
 #include "CTFPlayerController.h"
 #include "CTFFlagActor.h"
 #include "GameFramework/PlayerController.h"
@@ -19,7 +20,7 @@ ACTFGameMode::ACTFGameMode()
     PlayerControllerClass = ACTFPlayerController::StaticClass();
     PlayerStateClass = ACTFPlayerState::StaticClass();
     GameStateClass = ACTFGameState::StaticClass();
-
+  
     // Inicialize o placar
     RedScore = 0;
     BlueScore = 0;
@@ -120,8 +121,17 @@ void ACTFGameMode::HandleFlagCapture(ACTFCharacter* ScoringCharacter)
     // Condição de vitória
     if ((RedScore >= 3 || BlueScore >= 3) && !bHasGameEnded)
     {
+       
         bHasGameEnded = true;
         UE_LOG(LogTemp, Warning, TEXT("%s Team wins the game!"), *UEnum::GetValueAsString(ScoringTeam));
+        
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            if (ACTFPlayerController* PC = Cast<ACTFPlayerController>(It->Get()))
+            {
+                PC->Client_SetWinningTeam(ScoringTeam);
+            }
+        }
 
 #if WITH_EDITOR
         // PIE: ClientTravel para cada jogador
@@ -158,7 +168,7 @@ void ACTFGameMode::BeginPlay()
         PC->SetInputMode(FInputModeGameOnly());
         PC->bShowMouseCursor = false;
     }
-
+    
     TArray<AActor*> FoundFlags;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTFFlagActor::StaticClass(), FoundFlags);
 

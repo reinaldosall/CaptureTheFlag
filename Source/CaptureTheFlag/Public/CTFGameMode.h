@@ -23,7 +23,7 @@ public:
 
 	void AssignTeam(APlayerState* PlayerState);
 	void HandleFlagCapture(ACTFCharacter* ScoringCharacter);
-
+	
 protected:
 	int32 RedScore;
 	int32 BlueScore;

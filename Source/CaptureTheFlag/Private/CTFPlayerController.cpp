@@ -1,4 +1,5 @@
 #include "CTFPlayerController.h"
+#include "CTFGameInstance.h"
 #include "CTFGameHUDWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -12,20 +13,30 @@ ACTFPlayerController::ACTFPlayerController()
 	}
 }
 
+void ACTFPlayerController::Client_SetWinningTeam_Implementation(ETeam WinningTeam)
+{
+	if (UCTFGameInstance* GI = Cast<UCTFGameInstance>(GetGameInstance()))
+	{
+		GI->LastWinningTeam = WinningTeam;
+		UE_LOG(LogTemp, Warning, TEXT("[CLIENT] GameInstance atualizado via RPC: %s"), *UEnum::GetValueAsString(WinningTeam));
+	}
+}
+
 void ACTFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
 	SetInputMode(FInputModeGameOnly());
 	bShowMouseCursor = false;
-
+	FString MapName = GetWorld()->GetMapName();
+	
 	UE_LOG(LogTemp, Warning, TEXT("PlayerController BeginPlay | HasAuthority: %s | IsLocalController: %s"),
 		HasAuthority() ? TEXT("true") : TEXT("false"),
 		IsLocalController() ? TEXT("true") : TEXT("false"));
 
 	if (IsLocalController())
 	{
-		if (GameHUDWidgetClass)
+		if (GameHUDWidgetClass && MapName.Contains("FirstPerson"))
 		{
 			GameHUDWidget = CreateWidget<UCTFGameHUDWidget>(this, GameHUDWidgetClass);
 			if (GameHUDWidget)

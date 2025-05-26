@@ -19,7 +19,10 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 BlueScore;
 
-	void AddScore(ETeam Team, int32 Amount);
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Score")
+	ETeam LastWinningTeam;
 
+	void AddScore(ETeam Team, int32 Amount);
+	void OnRep_LastWinningTeam();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

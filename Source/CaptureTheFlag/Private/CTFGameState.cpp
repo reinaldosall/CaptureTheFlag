@@ -1,4 +1,5 @@
 #include "CTFGameState.h"
+#include "CTFGameInstance.h"
 #include "Net/UnrealNetwork.h"
 
 ACTFGameState::ACTFGameState()
@@ -22,11 +23,22 @@ void ACTFGameState::AddScore(ETeam Team, int32 Amount)
 		}
 	}
 }
+void ACTFGameState::OnRep_LastWinningTeam()
+{
+	if (UCTFGameInstance* GI = Cast<UCTFGameInstance>(GetGameInstance()))
+	{
+		GI->LastWinningTeam = LastWinningTeam;
+
+		UE_LOG(LogTemp, Warning, TEXT("[CLIENT] LastWinningTeam atualizado para: %s"),
+			*UEnum::GetValueAsString(LastWinningTeam));
+	}
+}
 
 void ACTFGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(ACTFGameState, LastWinningTeam);
 	DOREPLIFETIME(ACTFGameState, RedScore);
 	DOREPLIFETIME(ACTFGameState, BlueScore);
 }

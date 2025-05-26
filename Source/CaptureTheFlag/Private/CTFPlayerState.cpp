@@ -23,6 +23,6 @@ void ACTFPlayerState::OnRep_Team()
 void ACTFPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
+    
     DOREPLIFETIME(ACTFPlayerState, Team);
 }

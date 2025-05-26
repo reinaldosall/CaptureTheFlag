@@ -4,8 +4,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Engine/Engine.h" // necessário para GEngine
-#include "CTFPlayerState.h" // necessário para acessar o Team
+#include "Engine/Engine.h"
+#include "CTFPlayerState.h" 
 
 ACTFCharacter::ACTFCharacter()
 {
