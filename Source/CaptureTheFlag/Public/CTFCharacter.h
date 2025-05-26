@@ -32,9 +32,23 @@ protected:
 	void Turn(float Value);
 	void StartJump();
 	void StopJump();
+	void Fire();
+
+	UFUNCTION(Server, Reliable)
+	void ServerFire();
+
+	UFUNCTION()
+	void OnFirePressed();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	USceneComponent* MuzzleLocation;
 
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TSubclassOf<AActor> ProjectileClass; // Classe do projétil
+	
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -45,4 +59,5 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	class USkeletalMeshComponent* Gun;
+	
 };

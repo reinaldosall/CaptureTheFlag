@@ -28,6 +28,11 @@ ACTFCharacter::ACTFCharacter()
     Mesh1P->SetRelativeRotation(FRotator(2.f, -15.f, 5.f));
 
     // Arma
+    static ConstructorHelpers::FClassFinder<AActor> ProjectileBPClass(TEXT("/Game/FirstPerson/Blueprints/BP_FirstPersonProjectile"));
+    if (ProjectileBPClass.Class != nullptr)
+    {
+        ProjectileClass = ProjectileBPClass.Class;
+    }
     Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun"));
     Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
     Gun->bCastDynamicShadow = false;
@@ -42,6 +47,12 @@ ACTFCharacter::ACTFCharacter()
 
     //GAS
     AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+
+    // Muzzle
+    MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
+    MuzzleLocation->SetupAttachment(CameraComponent);
+    MuzzleLocation->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
+
 
 }
 
@@ -93,6 +104,8 @@ void ACTFCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACTFCharacter::StartJump);
     PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACTFCharacter::StopJump);
     PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ACTFCharacter::ActivateDash);
+    PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACTFCharacter::OnFirePressed);
+
 
 }
 
@@ -137,5 +150,40 @@ void ACTFCharacter::ActivateDash()
     if (AbilitySystemComponent)
     {
         AbilitySystemComponent->TryActivateAbilityByClass(UDashAbility::StaticClass());
+    }
+}
+
+void ACTFCharacter::ServerFire_Implementation()
+{
+    Fire();
+}
+
+void ACTFCharacter::Fire()
+{
+    if (!HasAuthority()) return; // Garante que só o servidor spawna
+
+    if (ProjectileClass)
+    {
+        FVector MuzzleSpawnLocation = CameraComponent->GetComponentLocation() + CameraComponent->GetForwardVector() * 100.f;
+        FRotator MuzzleRotation = CameraComponent->GetComponentRotation();
+
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.Owner = this;
+        SpawnParams.Instigator = GetInstigator();
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+        GetWorld()->SpawnActor<AActor>(ProjectileClass, MuzzleSpawnLocation, MuzzleRotation, SpawnParams);
+    }
+}
+
+void ACTFCharacter::OnFirePressed()
+{
+    if (HasAuthority())
+    {
+        Fire(); // se for servidor
+    }
+    else
+    {
+        ServerFire(); // se for cliente, pede pro servidor
     }
 }
