@@ -1,5 +1,6 @@
 #include "CTFGameState.h"
 #include "CTFGameHUDWidget.h"
+#include "CTFPlayerController.h"	
 #include "CTFGameInstance.h"
 #include "Net/UnrealNetwork.h"
 

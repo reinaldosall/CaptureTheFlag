@@ -111,11 +111,21 @@ void ACTFGameMode::HandleFlagCapture(ACTFCharacter* ScoringCharacter)
     {
         RedScore++;
         UE_LOG(LogTemp, Warning, TEXT("Red Team scored! Current score: %d"), RedScore);
+        
+        if (ACTFGameState* GS = GetGameState<ACTFGameState>())
+        {
+            GS->RedScore++;
+        }
     }
     else if (ScoringTeam == ETeam::Blue)
     {
         BlueScore++;
         UE_LOG(LogTemp, Warning, TEXT("Blue Team scored! Current score: %d"), BlueScore);
+        
+        if (ACTFGameState* GS = GetGameState<ACTFGameState>())
+        {
+            GS->BlueScore++;
+        }
     }
 
     // Condição de vitória

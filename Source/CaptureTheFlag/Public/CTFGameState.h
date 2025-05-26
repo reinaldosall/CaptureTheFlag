@@ -1,8 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CTFPlayerController.h"
-	
 #include "GameFramework/GameState.h"
 #include "ETeam.h"
 #include "CTFGameState.generated.h"
