@@ -1,5 +1,6 @@
 #include "CTFPlayerController.h"
 #include "CTFGameInstance.h"
+#include "CTFGameState.h"
 #include "CTFGameHUDWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -22,6 +23,20 @@ void ACTFPlayerController::Client_SetWinningTeam_Implementation(ETeam WinningTea
 	}
 }
 
+void ACTFPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (IsLocalController() && GameHUDWidget)
+	{
+		ACTFGameState* GS = GetWorld()->GetGameState<ACTFGameState>();
+		if (GS)
+		{
+			GameHUDWidget->UpdateMatchTimer(GS->MatchTimeRemaining);
+			GameHUDWidget->UpdateScore(GS->RedScore, GS->BlueScore);
+		}
+	}
+}
 void ACTFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -54,4 +69,6 @@ void ACTFPlayerController::BeginPlay()
 			UE_LOG(LogTemp, Error, TEXT("GameHUDWidgetClass é nullptr"));
 		}
 	}
+	
 }
+

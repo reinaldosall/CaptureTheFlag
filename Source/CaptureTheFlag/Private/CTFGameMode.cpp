@@ -157,6 +157,19 @@ void ACTFGameMode::HandleFlagCapture(ACTFCharacter* ScoringCharacter)
     }
 }
 
+void ACTFGameMode::UpdateMatchTime()
+{
+    if (ACTFGameState* GS = GetGameState<ACTFGameState>())
+    {
+        GS->MatchTimeRemaining--;
+
+        if (GS->MatchTimeRemaining <= 0)
+        {
+            GetWorldTimerManager().ClearTimer(MatchTimerHandle);
+            // Lógica de fim de jogo por tempo, se desejar
+        }
+    }
+}
 
 void ACTFGameMode::BeginPlay()
 {
@@ -168,7 +181,14 @@ void ACTFGameMode::BeginPlay()
         PC->SetInputMode(FInputModeGameOnly());
         PC->bShowMouseCursor = false;
     }
-    
+
+    if (ACTFGameState* GS = GetGameState<ACTFGameState>())
+    {
+        GS->MatchTimeRemaining = InitialMatchTime;
+    }
+
+    GetWorldTimerManager().SetTimer(MatchTimerHandle, this, &ACTFGameMode::UpdateMatchTime, 1.0f, true);
+
     TArray<AActor*> FoundFlags;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACTFFlagActor::StaticClass(), FoundFlags);
 

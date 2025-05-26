@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CTFPlayerController.h"
+	
 #include "GameFramework/GameState.h"
 #include "ETeam.h"
 #include "CTFGameState.generated.h"
@@ -22,6 +24,12 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Score")
 	ETeam LastWinningTeam;
 
+	UPROPERTY(ReplicatedUsing = OnRep_MatchTime)
+	int32 MatchTimeRemaining;
+
+	UFUNCTION()
+	void OnRep_MatchTime();
+	
 	void AddScore(ETeam Team, int32 Amount);
 	void OnRep_LastWinningTeam();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

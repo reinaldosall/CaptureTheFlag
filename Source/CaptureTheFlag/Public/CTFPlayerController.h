@@ -18,6 +18,9 @@ public:
 	UFUNCTION(Client, Reliable)
 	void Client_SetWinningTeam(ETeam WinningTeam);
 	void Client_SetWinningTeam_Implementation(ETeam WinningTeam);
+
+	virtual void Tick(float DeltaTime) override;
+	UCTFGameHUDWidget* GetGameHUDWidget() const { return GameHUDWidget; }
 	
 protected:
 	virtual void BeginPlay() override;

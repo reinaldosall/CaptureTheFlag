@@ -1,4 +1,5 @@
 #include "CTFGameState.h"
+#include "CTFGameHUDWidget.h"
 #include "CTFGameInstance.h"
 #include "Net/UnrealNetwork.h"
 
@@ -34,11 +35,28 @@ void ACTFGameState::OnRep_LastWinningTeam()
 	}
 }
 
+void ACTFGameState::OnRep_MatchTime()
+{
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PC = It->Get();
+		if (ACTFPlayerController* CTFPC = Cast<ACTFPlayerController>(PC))
+		{
+			if (CTFPC->GetGameHUDWidget())
+			{
+				CTFPC->GetGameHUDWidget()->UpdateMatchTimer(MatchTimeRemaining);
+			}
+		}
+	}
+}
+
+
 void ACTFGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACTFGameState, LastWinningTeam);
+	DOREPLIFETIME(ACTFGameState, MatchTimeRemaining);
 	DOREPLIFETIME(ACTFGameState, RedScore);
 	DOREPLIFETIME(ACTFGameState, BlueScore);
 }

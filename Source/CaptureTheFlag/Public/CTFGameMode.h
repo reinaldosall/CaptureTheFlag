@@ -23,6 +23,11 @@ public:
 
 	void AssignTeam(APlayerState* PlayerState);
 	void HandleFlagCapture(ACTFCharacter* ScoringCharacter);
+
+	FTimerHandle MatchTimerHandle;
+
+	int32 InitialMatchTime = 300; 
+	void UpdateMatchTime();
 	
 protected:
 	int32 RedScore;
