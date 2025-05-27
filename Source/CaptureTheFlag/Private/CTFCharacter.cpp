@@ -78,7 +78,7 @@ void ACTFCharacter::BeginPlay()
         if (ACTFPlayerState* PS = Cast<ACTFPlayerState>(GetPlayerState()))
         {
             FString TeamName = (PS->Team == ETeam::Red) ? TEXT("Red") : TEXT("Blue");
-            GEngine->AddOnScreenDebugMessage(-1, 155.f, FColor::Yellow, FString::Printf(TEXT("You are on the %s Team"), *TeamName));
+            GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Yellow, FString::Printf(TEXT("You are on the %s Team"), *TeamName));
         }
     }
 
