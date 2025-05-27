@@ -44,6 +44,9 @@ public:
 
 	ACTFCharacter* GetFlagHolder() const { return FlagHolder; }
 
+	UFUNCTION(BlueprintCallable)
+	void DropFlag();
+
 private:
 	FVector InitialLocation;
 	FRotator InitialRotation;

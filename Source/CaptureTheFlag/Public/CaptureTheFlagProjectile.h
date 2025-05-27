@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
 #include "CaptureTheFlagProjectile.generated.h"
 
 class USphereComponent;

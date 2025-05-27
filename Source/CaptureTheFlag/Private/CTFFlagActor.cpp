@@ -72,3 +72,13 @@ void ACTFFlagActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ACTFFlagActor, FlagHolder);
 }
+void ACTFFlagActor::DropFlag()
+{
+	if (FlagHolder)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Flag dropped by: %s"), *FlagHolder->GetName());
+		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		SetActorEnableCollision(true);
+		FlagHolder = nullptr;
+	}
+}

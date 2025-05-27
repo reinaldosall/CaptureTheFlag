@@ -1,5 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "EngineUtils.h" // Necessário para TActorIterator
+#include "CTFFlagActor.h" // Para acessar ACTFFlagActor
+#include "GameFramework/Actor.h" // Geralmente necessário
+#include "Engine/World.h" // Para GetWorld()
+#include "CTFCharacter.h"
 #include "CaptureTheFlagProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
@@ -33,6 +38,19 @@ ACaptureTheFlagProjectile::ACaptureTheFlagProjectile()
 
 void ACaptureTheFlagProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+
+	ACTFCharacter* HitCharacter = Cast<ACTFCharacter>(OtherActor);
+	if (HitCharacter)
+	{
+		for (TActorIterator<ACTFFlagActor> It(GetWorld()); It; ++It)
+		{
+			ACTFFlagActor* Flag = *It;
+			if(Flag && Flag->GetFlagHolder() == HitCharacter)
+			{
+				Flag->DropFlag();
+			}
+		}
+	}
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
