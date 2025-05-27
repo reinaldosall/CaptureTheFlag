@@ -47,7 +47,11 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
-	TSubclassOf<AActor> ProjectileClass; // Classe do projétil
+	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsDead = false;
+
 	
 
 private:

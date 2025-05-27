@@ -1,11 +1,12 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "CaptureTheFlagProjectile.h"
 #include "EngineUtils.h" // Necessário para TActorIterator
 #include "CTFFlagActor.h" // Para acessar ACTFFlagActor
+#include "CTFGameMode.h" // Para acessar ACTFFlagActor
+#include "CTFCharacter.h" // Para acessar ACTFFlagActor
 #include "GameFramework/Actor.h" // Geralmente necessário
 #include "Engine/World.h" // Para GetWorld()
-#include "CTFCharacter.h"
-#include "CaptureTheFlagProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 
@@ -51,6 +52,34 @@ void ACaptureTheFlagProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 			}
 		}
 	}
+
+	if (HitCharacter && HitCharacter->HasAuthority() && !HitCharacter->bIsDead)
+	{
+		HitCharacter->bIsDead = true;
+		AController* HitController = HitCharacter->GetController();
+
+		if (HitController)
+		{
+			HitCharacter->DetachFromControllerPendingDestroy();
+			HitCharacter->Destroy();
+
+			FTimerHandle RespawnTimerHandle;
+			FTimerDelegate RespawnDelegate = FTimerDelegate::CreateLambda([=]()
+			{
+				if (UWorld* World = HitController->GetWorld())
+				{
+					if (ACTFGameMode* GM = Cast<ACTFGameMode>(World->GetAuthGameMode()))
+					{
+						GM->RespawnPlayer(HitController); // ✅ Agora usa a função nova
+					}
+				}
+			});
+
+			HitController->GetWorldTimerManager().SetTimer(RespawnTimerHandle, RespawnDelegate, 3.0f, false);
+		}
+	}
+
+	
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{

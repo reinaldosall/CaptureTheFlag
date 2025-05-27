@@ -28,6 +28,10 @@ public:
 
 	int32 InitialMatchTime = 300; 
 	void UpdateMatchTime();
+
+	UFUNCTION()
+	void RespawnPlayer(AController* Controller);
+
 	
 protected:
 	int32 RedScore;

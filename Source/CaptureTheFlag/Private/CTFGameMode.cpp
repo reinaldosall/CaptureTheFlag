@@ -214,4 +214,20 @@ void ACTFGameMode::BeginPlay()
 
     UE_LOG(LogTemp, Warning, TEXT("Game has started!"));
 }
+void ACTFGameMode::RespawnPlayer(AController* Controller)
+{
+    if (!Controller)
+        return;
+
+    AActor* StartSpot = ChoosePlayerStart(Controller);
+
+    if (!StartSpot)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No spawn point found. Using default."));
+        StartSpot = FindPlayerStart(Controller);
+    }
+
+    RestartPlayerAtPlayerStart(Controller, StartSpot);
+}
+
 
