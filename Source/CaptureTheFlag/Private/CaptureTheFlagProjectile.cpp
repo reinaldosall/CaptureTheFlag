@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CaptureTheFlagProjectile.h"
 #include "EngineUtils.h" // Necessário para TActorIterator

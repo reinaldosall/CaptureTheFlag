@@ -50,9 +50,7 @@ public:
 	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	bool bIsDead = false;
-
-	
+	bool bIsDead = false;	
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -62,6 +60,5 @@ private:
 	class USkeletalMeshComponent* Mesh1P;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-	class USkeletalMeshComponent* Gun;
-	
+	class USkeletalMeshComponent* Gun;	
 };
