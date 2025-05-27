@@ -53,3 +53,18 @@ void UCTFGameHUDWidget::UpdateMatchTimer(int32 SecondsRemaining)
 		MatchTimerText->SetText(FText::FromString(FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds)));
 	}
 }
+
+void UCTFGameHUDWidget::ShowRespawnCountdown(int32 SecondsRemaining)
+{
+	if (RespawnCountdownText)
+	{
+		if (SecondsRemaining > 0)
+		{
+			RespawnCountdownText->SetText(FText::FromString(FString::Printf(TEXT("Respawn in %d..."), SecondsRemaining)));
+		}
+		else
+		{
+			RespawnCountdownText->SetText(FText::GetEmpty());
+		}
+	}
+}

@@ -5,6 +5,7 @@
 #include "CTFFlagActor.h" // Para acessar ACTFFlagActor
 #include "CTFGameMode.h" // Para acessar ACTFFlagActor
 #include "CTFCharacter.h" // Para acessar ACTFFlagActor
+#include "CTFPlayerController.h"
 #include "GameFramework/Actor.h" // Geralmente necessário
 #include "Engine/World.h" // Para GetWorld()
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -63,19 +64,27 @@ void ACaptureTheFlagProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 			HitCharacter->DetachFromControllerPendingDestroy();
 			HitCharacter->Destroy();
 
-			FTimerHandle RespawnTimerHandle;
-			FTimerDelegate RespawnDelegate = FTimerDelegate::CreateLambda([=]()
-			{
-				if (UWorld* World = HitController->GetWorld())
-				{
-					if (ACTFGameMode* GM = Cast<ACTFGameMode>(World->GetAuthGameMode()))
-					{
-						GM->RespawnPlayer(HitController); // ✅ Agora usa a função nova
-					}
-				}
-			});
+			int32 RespawnTime = 3;
 
-			HitController->GetWorldTimerManager().SetTimer(RespawnTimerHandle, RespawnDelegate, 3.0f, false);
+			for (int32 i = RespawnTime; i >= 0; --i)
+			{
+				FTimerHandle CountdownHandle;
+				HitController->GetWorldTimerManager().SetTimer(CountdownHandle, FTimerDelegate::CreateLambda([=]()
+				{
+					if (ACTFPlayerController* CTFPC = Cast<ACTFPlayerController>(HitController))
+					{
+						CTFPC->Client_UpdateRespawnCountdown(i);
+					}
+
+					if (i == 0)
+					{
+						if (ACTFGameMode* GM = Cast<ACTFGameMode>(HitController->GetWorld()->GetAuthGameMode()))
+						{
+							GM->RespawnPlayer(HitController);
+						}
+					}
+				}), RespawnTime - i, false);
+			}
 		}
 	}
 

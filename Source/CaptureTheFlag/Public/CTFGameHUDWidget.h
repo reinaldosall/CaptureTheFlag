@@ -32,6 +32,12 @@ public:
 
     UPROPERTY(meta = (BindWidget))
     class UTextBlock* MatchTimerText;
+    
+    UFUNCTION(BlueprintCallable)
+    void ShowRespawnCountdown(int32 SecondsRemaining);
+
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* RespawnCountdownText;
 
     void UpdateScore(int32 RedScore, int32 BlueScore);
     void SetTeamName(FString TeamName);

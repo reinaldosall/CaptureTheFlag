@@ -108,3 +108,11 @@ void ACTFPlayerController::BeginPlay()
 		}
 	}
 }
+
+void ACTFPlayerController::Client_UpdateRespawnCountdown_Implementation(int32 Time)
+{
+	if (GameHUDWidget)
+	{
+		GameHUDWidget->ShowRespawnCountdown(Time);
+	}
+}
